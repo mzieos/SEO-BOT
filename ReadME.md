@@ -7,11 +7,11 @@ A sophisticated Python-based web traffic bot that simulates human-like browsing 
 ```
 SEO_BOT/
 ├── runBot.bat                      # Automated launcher
-├── source/
+├── Source/
 │   ├──  SEO_BOT.py                 # Main bot script
 |   └──  requirements.txt           # Required dependencies
 ├── Logs/                           # Logs directory (auto-created)
-└── customize/
+└── Customize/
     ├── urls.txt                    # Target URLs configuration
     └── spend_time.txt              # Visit duration configuration
 ```
