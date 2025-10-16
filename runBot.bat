@@ -100,7 +100,7 @@ if !PYTHON_CHECK! equ 0 (
     for /f "tokens=*" %%i in ('python --version 2^>^&1') do set "PYTHON_VERSION_INSTALLED=%%i"
     echo Python found: !PYTHON_VERSION_INSTALLED!
     %LOG% Python found: !PYTHON_VERSION_INSTALLED!
-    goto INSTALL_REQUIREMENTS
+    goto CHECK_REQUIREMENTS
 )
 
 echo.
@@ -122,10 +122,10 @@ echo.
 pause
 exit /b 1
 
-:INSTALL_REQUIREMENTS
+:CHECK_REQUIREMENTS
 echo.
 echo ========================================
-echo    Installing Python Requirements
+echo    Checking Python Requirements
 echo ========================================
 echo.
 
@@ -138,11 +138,22 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Installing packages from requirements.txt...
+echo Checking if requirements are already installed...
+%LOG% Checking existing requirements installation
+
+REM Quick check if main packages are already installed
+python -c "import selenium, fake_useragent" >nul 2>&1
+if !errorlevel! equ 0 (
+    echo [SKIPPED] Requirements already installed.
+    %LOG% Requirements already installed - skipping
+    goto REQUIREMENTS_DONE
+)
+
+echo [INSTALLING] Packages not found. Installing requirements...
 %LOG% Starting requirements installation
 pip install --upgrade pip >nul 2>&1
 
-echo Installing required packages...
+echo Installing packages from requirements.txt...
 pip install -r "%REQUIREMENTS_PATH%"
 
 if errorlevel 1 (
@@ -155,8 +166,10 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Requirements installed successfully.
+echo [SUCCESS] Requirements installed successfully.
 %LOG% Requirements installed successfully
+
+:REQUIREMENTS_DONE
 
 REM Display configuration info
 echo.
