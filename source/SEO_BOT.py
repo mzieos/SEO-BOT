@@ -1,4 +1,5 @@
 import time
+import re
 import random
 import logging
 from datetime import datetime
@@ -635,10 +636,10 @@ class HumanLikeTrafficBot:
             self.logger.info("Browser closed")
 
 def main():
-    """Main function to run the bot"""
+    """Main function to run the bot(s)"""
     
     # Read URLs from urls.txt file
-    urls_file = os.path.join(CUSTOMIZE_DIR, "urls.txt")  # Changed to CUSTOMIZE_DIR
+    urls_file = os.path.join(CUSTOMIZE_DIR, "urls.txt")
     try:
         with open(urls_file, 'r') as f:
             urls = [line.strip() for line in f if line.strip() and not line.startswith('#')]
@@ -656,6 +657,57 @@ def main():
         print(f"ERROR: Error reading {urls_file}: {str(e)}")
         return
     
+    # Read stay duration
+    try:
+        duration_file = os.path.join(CUSTOMIZE_DIR, "spend_time.txt")
+        with open(duration_file, 'r') as f:
+            content = f.read().strip()
+        stay_duration = int(re.findall(r'\d+', content)[0])
+    except:
+        stay_duration = 600  # Default 10 minutes
+    
+    # Check if multi-bot mode is requested
+    bot_count_file = os.path.join(CUSTOMIZE_DIR, "bot_count.txt")
+    bot_count_file_no_ext = os.path.join(CUSTOMIZE_DIR, "bot_count")
+
+    if os.path.exists(bot_count_file) or os.path.exists(bot_count_file_no_ext):
+        # Multi-bot mode - Import and use BotManager
+        try:
+            from bot_manager import BotManager
+            
+            # Use the file that exists
+            actual_bot_count_file = bot_count_file if os.path.exists(bot_count_file) else bot_count_file_no_ext
+            print(f"🎯 Multi-bot mode detected! Using: {actual_bot_count_file}")
+            
+            bot_manager = BotManager()
+            all_session_logs = bot_manager.run_distributed_bots(urls, stay_duration)
+            
+            # Generate master summary
+            successful_bots = [log for log in all_session_logs if log.get('status') != 'failed' and log.get('status') != 'exception']
+            failed_bots = [log for log in all_session_logs if log.get('status') == 'failed' or log.get('status') == 'exception']
+            
+            print("\n" + "="*60)
+            print("🤖 MULTI-BOT SESSION SUMMARY")
+            print("="*60)
+            print(f"✅ Successful bots: {len(successful_bots)}")
+            print(f"❌ Failed bots: {len(failed_bots)}")
+            print(f"📊 Total URLs processed: {len(successful_bots) * len(urls)}")
+            print(f"💾 Individual bot logs saved in: {LOGS_DIR}/bot_*/")
+            print("="*60)
+            
+        except ImportError as e:
+            print(f"ERROR: Could not import BotManager. Running in single bot mode.")
+            print(f"Error details: {e}")
+            run_single_bot(urls)
+            
+    else:
+        # Single bot mode (backward compatibility)
+        print("🔄 Single bot mode detected (no bot_count file found)")
+        run_single_bot(urls)
+
+def run_single_bot(urls):
+    """Run single bot instance (backward compatibility)"""
+    print("Running in single bot mode...")
     bot = HumanLikeTrafficBot(urls, headless=True)
     
     try:
@@ -678,6 +730,6 @@ def main():
     
     finally:
         bot.cleanup()
-
+        
 if __name__ == "__main__":
     main()
