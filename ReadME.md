@@ -1,4 +1,4 @@
-# SEO Bot - Web Traffic Simulator
+# SEO Bot - Web Traffic Simulator v1.2
 
 A sophisticated Python-based web traffic bot that simulates human-like browsing behavior to visit websites with natural interactions.
 
@@ -6,14 +6,19 @@ A sophisticated Python-based web traffic bot that simulates human-like browsing 
 
 ```
 SEO_BOT/
-├── runBot.bat                      # Automated launcher
+├── runBot.bat                                  # Perfect launcher
 ├── Source/
-│   ├──  SEO_BOT.py                 # Main bot script
-|   └──  requirements.txt           # Required dependencies
-├── Logs/                           # Logs directory (auto-created)
-└── Customize/
-    ├── urls.txt                    # Target URLs configuration
-    └── spend_time.txt              # Visit duration configuration
+│   ├── __pycache__/                            # Cache
+│   ├── SEO_BOT.py                              # Updated for multi-bot
+│   └── bot_manager.py                          # Unlimited scaling
+├── Customize/
+│   ├── urls.txt
+│   ├── spend_time.txt
+│   └── bot_count.txt                           # Your bot count (49, 100, 1000, etc.)
+└── Logs/
+    ├── bot_1/                                  # Individual bot logs
+    ├── bot_2/
+    └── ... (as many as bot_count.txt)
 ```
 
 ## 🚀 Quick Start
@@ -46,15 +51,32 @@ If you prefer manual installation:
 
 ## ⚙️ Configuration
 
-### 1. URLs Configuration (`Customize/urls.txt`)
+I'll update the bot count section of your documentation. Here's the revised configuration section:
 
-Add your target URLs, one per line:
+## ⚙️ Configuration
+
+### 1. BOT Count (`Customize/bot_count.txt`)
+
+**System Requirements Guide:**
+
+##### Specify the number of concurrent bots to run
 
 ```
-https://www.example.com/
-https://www.anotherexample.com/
-https://www.yoursite.com/
+10    # Safe test          (~2GB RAM, 4-core CPU)
+50    # Balanced scale     (~10GB RAM, 6-core CPU) 
+100   # Medium scale       (~20GB RAM, 8-core CPU)  
+500   # Large scale        (~100GB RAM, 16-core CPU)
+1000  # Extreme scale      (Server-grade hardware)
+5000  # INSANE scale! 🚀
 ```
+
+**Performance Optimizations:**
+
+- Smart Concurrency: Higher concurrency limits for more bots
+- Reduced Console Spam: Only shows first 50 bots in console
+- Progress Tracking: For 50+ bots, shows progress every 10 completions
+- Memory Warnings: Automatic RAM usage estimates
+- Safety Confirmation: Asks for confirmation for 1000+ bots
 
 ### 2. Visit Duration (`Customize/spend_time.txt`)
 
@@ -65,6 +87,18 @@ Specify time in seconds (60 seconds to 24 hours):
 ```
 
 This means 10 minutes (600 seconds) per URL.
+
+### 3. URLs Configuration (`Customize/urls.txt`)
+
+Add your target URLs, one per line:
+
+```
+https://www.example.com/
+https://www.anotherexample.com/
+https://www.yoursite.com/
+```
+
+The updated bot count section now includes the scale testing information and system requirements you provided, making it clear what hardware is needed for each bot count level.
 
 ## 🎯 Features
 
@@ -90,7 +124,7 @@ This means 10 minutes (600 seconds) per URL.
 
 ## 📊 Logging & Monitoring
 
-The bot creates detailed logs in the `Logs/` folder:
+The bot creates detailed logs in the `Logs/bot1....` folder:
 
 - `SEO_BOT.log` - Real-time activity log
 - `session_progress.json` - Live progress tracking
@@ -160,7 +194,7 @@ The bot automatically installs:
 
 ### Log Files Location
 
-Check `G:\GitHubRep\web_SEO_BOT\Logs\` for detailed error information and session reports.
+Check `SEO_BOT\Logs\` for detailed error information and session reports.
 
 ## 📄 License
 
