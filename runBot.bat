@@ -1,21 +1,27 @@
 @echo off
 setlocal enabledelayedexpansion
 chcp 65001 >nul
-title Web Traffic Bot Launcher
+title SEO Bot Launcher
 
-set "PROJECT_ROOT=G:\GitHubRep\SEO_BOT"
+REM Get the directory where this batch file is located
+set "PROJECT_ROOT=%~dp0"
+REM Remove trailing backslash
+set "PROJECT_ROOT=%PROJECT_ROOT:~0,-1%"
+
 set "REQUIREMENTS_PATH=%PROJECT_ROOT%\source\requirements.txt"
 set "BOT_SCRIPT_PATH=%PROJECT_ROOT%\source\SEO_BOT.py"
 set "CUSTOMIZE_DIR=%PROJECT_ROOT%\customize"
 set "PYTHON_VERSION=3.11.4"
 set "PYTHON_URL=https://www.python.org/ftp/python/%PYTHON_VERSION%/python-%PYTHON_VERSION%-amd64.exe"
 set "PYTHON_INSTALLER=python_installer.exe"
-set "TEMP_DIR=%TEMP%\web_SEO_BOT_setup"
+set "TEMP_DIR=%TEMP%\SEO_BOT_setup"
 set "LOG_FILE=%TEMP_DIR%\installation.log"
 
 echo ========================================
-echo    Web Traffic Bot Launcher
+echo           SEO Bot Launcher
 echo ========================================
+echo.
+echo Project Location: %PROJECT_ROOT%
 echo.
 
 REM Create temp directory for logs and downloads
@@ -30,7 +36,8 @@ if not exist "%TEMP_DIR%" (
 
 REM Function to log messages
 set "LOG=>> "%LOG_FILE%" 2>&1 echo [%date% %time%]"
-%LOG% Starting Web Traffic Bot Launcher
+%LOG% Starting SEO Bot Launcher
+%LOG% Project Root: %PROJECT_ROOT%
 
 REM Check if project structure exists
 echo Checking project structure...
@@ -312,10 +319,10 @@ if not exist "%PROJECT_ROOT%\Logs" (
 
 REM Run the bot
 echo ========================================
-echo    Starting Web Traffic Bot
+echo          Starting SEO Bot
 echo ========================================
 echo.
-%LOG% Starting traffic bot
+%LOG% Starting SEO bot
 
 echo Running: python "%BOT_SCRIPT_PATH%"
 echo Bot is starting... This may take a moment.
@@ -324,20 +331,20 @@ echo.
 python "%BOT_SCRIPT_PATH%"
 
 set "BOT_EXIT_CODE=%errorlevel%"
-%LOG% Traffic bot exited with code: %BOT_EXIT_CODE%
+%LOG% SEO bot exited with code: %BOT_EXIT_CODE%
 
 echo.
 if %BOT_EXIT_CODE% equ 0 (
     echo ========================================
-    echo    Bot Finished Successfully!
+    echo    SEO Bot Finished Successfully!
     echo ========================================
-    %LOG% Bot finished successfully
+    %LOG% SEO bot finished successfully
 ) else (
     echo ========================================
-    echo    Bot Finished with Errors
+    echo    SEO Bot Finished with Errors
     echo ========================================
     echo Exit code: %BOT_EXIT_CODE%
-    %LOG% Bot finished with error code: %BOT_EXIT_CODE%
+    %LOG% SEO bot finished with error code: %BOT_EXIT_CODE%
 )
 
 echo.
