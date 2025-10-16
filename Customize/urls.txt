@@ -1,0 +1,3 @@
+https://www.example.com/
+https://www.anotherexample.com/
+https://www.yoursite.com/
