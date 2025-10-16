@@ -1,4 +1,4 @@
-# 🌐 BOT for SEO Improvement
+# SEO Bot - Web Traffic Simulator
 
 A sophisticated Python-based web traffic bot that simulates human-like browsing behavior to visit websites with natural interactions.
 
