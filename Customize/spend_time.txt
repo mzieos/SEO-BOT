@@ -1,1 +1,1 @@
-600 seconds
+120 seconds

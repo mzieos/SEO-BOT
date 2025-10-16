@@ -12,8 +12,6 @@ set "REQUIREMENTS_PATH=%PROJECT_ROOT%\source\requirements.txt"
 set "BOT_SCRIPT_PATH=%PROJECT_ROOT%\source\SEO_BOT.py"
 set "CUSTOMIZE_DIR=%PROJECT_ROOT%\customize"
 set "PYTHON_VERSION=3.11.4"
-set "PYTHON_URL=https://www.python.org/ftp/python/%PYTHON_VERSION%/python-%PYTHON_VERSION%-amd64.exe"
-set "PYTHON_INSTALLER=python_installer.exe"
 set "TEMP_DIR=%TEMP%\SEO_BOT_setup"
 set "LOG_FILE=%TEMP_DIR%\installation.log"
 
@@ -102,147 +100,32 @@ if !PYTHON_CHECK! equ 0 (
     for /f "tokens=*" %%i in ('python --version 2^>^&1') do set "PYTHON_VERSION_INSTALLED=%%i"
     echo Python found: !PYTHON_VERSION_INSTALLED!
     %LOG% Python found: !PYTHON_VERSION_INSTALLED!
-    goto INSTALL_REQUIREMENTS
+    goto CHECK_REQUIREMENTS
 )
 
-echo Python not found in PATH or not installed.
-%LOG% Python not found in PATH
-
-REM Python installation section
 echo.
 echo ========================================
 echo        Python Installation Required
 echo ========================================
 echo.
-
-REM Check internet connectivity
-echo Checking internet connectivity...
-%LOG% Checking internet connectivity...
-powershell -Command "Test-NetConnection -ComputerName www.google.com -Port 80 -InformationLevel Quiet" >nul 2>&1
-
-if errorlevel 1 (
-    echo ERROR: No internet connection detected.
-    echo Please check your network connection and try again.
-    %LOG% ERROR: No internet connection
-    pause
-    exit /b 1
-)
-
-echo Internet connection available.
-%LOG% Internet connection verified
-
-REM Download Python installer with retry mechanism
-echo Downloading Python %PYTHON_VERSION% installer...
-%LOG% Starting Python installer download
-set "DOWNLOAD_ATTEMPTS=0"
-set "MAX_DOWNLOAD_ATTEMPTS=3"
-
-:DOWNLOAD_RETRY
-set /a DOWNLOAD_ATTEMPTS+=1
-echo Download attempt !DOWNLOAD_ATTEMPTS! of !MAX_DOWNLOAD_ATTEMPTS!...
-
-if exist "%PYTHON_INSTALLER%" (
-    del "%PYTHON_INSTALLER%" >nul 2>&1
-    timeout /t 1 >nul
-)
-
-powershell -Command "$ProgressPreference = 'SilentlyContinue'; try { Invoke-WebRequest -Uri '%PYTHON_URL%' -OutFile '%PYTHON_INSTALLER%' -UserAgent 'Mozilla/5.0' -TimeoutSec 30; exit 0 } catch { exit 1 }"
-
-if errorlevel 1 (
-    echo Download failed (Attempt !DOWNLOAD_ATTEMPTS!).
-    
-    if !DOWNLOAD_ATTEMPTS! lss !MAX_DOWNLOAD_ATTEMPTS! (
-        echo Retrying in 5 seconds...
-        timeout /t 5 >nul
-        goto DOWNLOAD_RETRY
-    ) else (
-        echo ERROR: Failed to download Python installer after !MAX_DOWNLOAD_ATTEMPTS! attempts.
-        echo Please check your internet connection or download Python manually from:
-        echo https://www.python.org/downloads/
-        %LOG% ERROR: Python download failed after multiple attempts
-        pause
-        exit /b 1
-    )
-)
-
-echo Download completed successfully.
-%LOG% Python installer downloaded successfully
-
-REM Verify downloaded file
-echo Verifying downloaded file...
-if not exist "%PYTHON_INSTALLER%" (
-    echo ERROR: Downloaded file not found.
-    %LOG% ERROR: Downloaded file not found
-    pause
-    exit /b 1
-)
-
-for /f %%i in ('dir /b "%PYTHON_INSTALLER%" ^| find /c /v ""') do set "FILE_SIZE=%%i"
-if "!FILE_SIZE!"=="0" (
-    echo ERROR: Downloaded file is empty.
-    del "%PYTHON_INSTALLER%" >nul 2>&1
-    %LOG% ERROR: Downloaded file is empty
-    pause
-    exit /b 1
-)
-
-echo File verified (!FILE_SIZE! bytes).
-%LOG% Installer file verified: !FILE_SIZE! bytes
-
-REM Install Python
+echo ERROR: Python !PYTHON_VERSION! or higher is required but not found.
 echo.
-echo Installing Python %PYTHON_VERSION%...
-echo IMPORTANT: In the Python installer, please CHECK "Add Python to PATH"!
+echo Please install Python !PYTHON_VERSION! or higher from:
+echo https://www.python.org/downloads/
 echo.
-echo Installation in progress... This may take a few minutes.
-%LOG% Starting Python installation
+echo After installation, make sure to:
+echo 1. Check "Add Python to PATH" during installation
+echo 2. Restart your command prompt
+echo 3. Run this script again
+echo.
+%LOG% ERROR: Python !PYTHON_VERSION! required but not found
+pause
+exit /b 1
 
-start /wait "" "%PYTHON_INSTALLER%" /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
-
-set "INSTALL_RESULT=%errorlevel%"
-
-REM Clean up installer
-if exist "%PYTHON_INSTALLER%" (
-    del "%PYTHON_INSTALLER%" >nul 2>&1
-    %LOG% Installer file cleaned up
-)
-
-if !INSTALL_RESULT! neq 0 (
-    echo ERROR: Python installation failed with error code: !INSTALL_RESULT!
-    echo Please install Python manually from https://www.python.org/
-    %LOG% ERROR: Python installation failed with code: !INSTALL_RESULT!
-    pause
-    exit /b 1
-)
-
-echo Python installation completed successfully.
-%LOG% Python installation completed
-
-REM Verify Python installation after install
-echo Verifying Python installation...
-timeout /t 3 >nul
-python --version >nul 2>&1
-
-if errorlevel 1 (
-    echo WARNING: Python installed but not detected in PATH.
-    echo This script will now close. Please:
-    echo 1. Restart your command prompt
-    echo 2. Run this script again
-    %LOG% WARNING: Python installed but not in PATH
-    echo.
-    echo Press any key to exit...
-    pause >nul
-    exit /b 0
-)
-
-for /f "tokens=*" %%i in ('python --version 2^>^&1') do set "PYTHON_VERSION_NEW=%%i"
-echo Python verified: !PYTHON_VERSION_NEW!
-%LOG% Python verified: !PYTHON_VERSION_NEW!
-
-:INSTALL_REQUIREMENTS
+:CHECK_REQUIREMENTS
 echo.
 echo ========================================
-echo    Installing Python Requirements
+echo    Checking Python Requirements
 echo ========================================
 echo.
 
@@ -255,11 +138,22 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Installing packages from requirements.txt...
+echo Checking if requirements are already installed...
+%LOG% Checking existing requirements installation
+
+REM Quick check if main packages are already installed
+python -c "import selenium, fake_useragent" >nul 2>&1
+if !errorlevel! equ 0 (
+    echo [SKIPPED] Requirements already installed.
+    %LOG% Requirements already installed - skipping
+    goto REQUIREMENTS_DONE
+)
+
+echo [INSTALLING] Packages not found. Installing requirements...
 %LOG% Starting requirements installation
 pip install --upgrade pip >nul 2>&1
 
-echo Installing required packages...
+echo Installing packages from requirements.txt...
 pip install -r "%REQUIREMENTS_PATH%"
 
 if errorlevel 1 (
@@ -272,8 +166,10 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Requirements installed successfully.
+echo [SUCCESS] Requirements installed successfully.
 %LOG% Requirements installed successfully
+
+:REQUIREMENTS_DONE
 
 REM Display configuration info
 echo.
@@ -355,10 +251,5 @@ echo Installation Log: %LOG_FILE%
 echo.
 echo Press any key to exit...
 pause >nul
-
-REM Final cleanup
-if exist "%PYTHON_INSTALLER%" (
-    del "%PYTHON_INSTALLER%" >nul 2>&1
-)
 
 endlocal

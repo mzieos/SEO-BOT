@@ -228,12 +228,23 @@ class HumanLikeTrafficBot:
             # Disable automatic redirects
             options.add_argument('--disable-features=NetworkService')
             
-            # Window size variations (common desktop resolutions)
-            resolutions = ['1920,1080', '1366,768', '1536,864', '1440,900']
-            options.add_argument(f'--window-size={random.choice(resolutions)}')
-            
+            # Headless-specific optimizations
             if self.headless:
-                options.add_argument('--headless')
+                options.add_argument('--headless=new')  # New headless mode
+                options.add_argument('--disable-gpu')  # GPU not needed in headless
+                options.add_argument('--disable-software-rasterizer')
+                options.add_argument('--no-first-run')
+                options.add_argument('--no-default-browser-check')
+                options.add_argument('--disable-background-timer-throttling')
+                options.add_argument('--disable-backgrounding-occluded-windows')
+                options.add_argument('--disable-renderer-backgrounding')
+                options.add_argument('--disable-extensions')
+                options.add_argument('--disable-plugins')
+                options.add_argument('--disable-images')  # Save bandwidth
+            else:
+                # Window size variations only for visible mode
+                resolutions = ['1920,1080', '1366,768', '1536,864', '1440,900']
+                options.add_argument(f'--window-size={random.choice(resolutions)}')
             
             self.driver = webdriver.Chrome(options=options)
             
@@ -245,6 +256,7 @@ class HumanLikeTrafficBot:
             
             self.logger.info(f"Driver initialized with user agent: {self.current_user_agent}")
             self.logger.info(f"Total stay duration per URL: {self.stay_duration} seconds")
+            self.logger.info(f"Running in {'HEADLESS' if self.headless else 'VISIBLE'} mode")
             
         except Exception as e:
             self.logger.error(f"Failed to setup driver: {str(e)}")
@@ -260,10 +272,14 @@ class HumanLikeTrafficBot:
         """Simulate random mouse movements"""
         try:
             self.logger.info("Performing random mouse movements")
+            
+            # Reduced movements in headless mode to save CPU
+            movement_count = random.randint(2, 5) if self.headless else random.randint(3, 8)
+            
             actions = ActionChains(self.driver)
             
             # Move to random positions on the page
-            for i in range(random.randint(3, 8)):
+            for i in range(movement_count):
                 x_offset = random.randint(100, 500)
                 y_offset = random.randint(100, 500)
                 actions.move_by_offset(x_offset, y_offset)
@@ -640,7 +656,7 @@ def main():
         print(f"ERROR: Error reading {urls_file}: {str(e)}")
         return
     
-    bot = HumanLikeTrafficBot(urls, headless=False)
+    bot = HumanLikeTrafficBot(urls, headless=True)
     
     try:
         session_log = bot.run()
