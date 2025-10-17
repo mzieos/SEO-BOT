@@ -9,10 +9,10 @@ REM Remove trailing backslash
 set "PROJECT_ROOT=%PROJECT_ROOT:~0,-1%"
 
 set "REQUIREMENTS_PATH=%PROJECT_ROOT%\source\requirements.txt"
-set "BOT_SCRIPT_PATH=%PROJECT_ROOT%\source\SEO_BOT.py"
+set "BOT_SCRIPT_PATH=%PROJECT_ROOT%\source\SC_BOT.py"
 set "CUSTOMIZE_DIR=%PROJECT_ROOT%\customize"
 set "PYTHON_VERSION=3.11.4"
-set "TEMP_DIR=%TEMP%\SEO_BOT_setup"
+set "TEMP_DIR=%TEMP%\SC_BOT_setup"
 set "LOG_FILE=%TEMP_DIR%\installation.log"
 
 echo ========================================

@@ -6,7 +6,7 @@ import os
 import concurrent.futures
 from threading import Semaphore
 import re
-from SEO_BOT import HumanLikeTrafficBot
+from SC_BOT import HumanLikeTrafficBot
 
 class BotManager:
     def __init__(self):
@@ -14,7 +14,7 @@ class BotManager:
         self.bot_instances = []
         self.session_logs = []
         
-        # Get project root (same as SEO_BOT.py)
+        # Get project root (same as SC_BOT.py)
         self.PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.LOGS_DIR = os.path.join(self.PROJECT_ROOT, 'Logs')
         self.CUSTOMIZE_DIR = os.path.join(self.PROJECT_ROOT, 'Customize')
@@ -81,8 +81,8 @@ class BotManager:
         file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
         logger.addHandler(file_handler)
         
-        # Only show console output for first 20 bots to avoid spam
-        if bot_id <= 20:
+        # Only show console output for first 50 bots to avoid spam
+        if bot_id <= 50:
             console_handler = logging.StreamHandler()
             console_handler.setFormatter(logging.Formatter(f'%(asctime)s - BOT_{bot_id} - %(levelname)s - %(message)s'))
             logger.addHandler(console_handler)
@@ -141,12 +141,12 @@ class BotManager:
         print(f"💾 Logs directory: {self.LOGS_DIR}")
         
         # Intelligent concurrency based on bot count
-        if bot_count <= 10:
+        if bot_count <= 50:
             max_concurrent = bot_count  # All at once for small numbers
         elif bot_count <= 100:
-            max_concurrent = 20  # Reasonable for medium scale
+            max_concurrent = 50  # Reasonable for medium scale
         else:
-            max_concurrent = 50  # High but manageable for large scale
+            max_concurrent = 80  # High but manageable for large scale
         
         print(f"⚡ Max concurrent bots: {max_concurrent}")
         print("="*60)

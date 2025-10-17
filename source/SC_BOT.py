@@ -191,7 +191,7 @@ class HumanLikeTrafficBot:
     
     def setup_logging(self):
         """Setup comprehensive logging with real-time output"""
-        log_file = os.path.join(LOGS_DIR, 'SEO_BOT.log')
+        log_file = os.path.join(LOGS_DIR, 'SC_BOT.log')
         
         # Clear previous log file to start fresh
         with open(log_file, 'w') as f:
