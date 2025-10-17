@@ -1,15 +1,22 @@
-# SEO Bot - Web Traffic Simulator v1.2
+# SpidyCrawler - Synthetic Web Traffic Agent v1.2
 
-A sophisticated Python-based web traffic bot that simulates human-like browsing behavior to visit websites with natural interactions.
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
+![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-lightgrey)
+![License](https://img.shields.io/badge/License-Educational-green)
+![Status](https://img.shields.io/badge/Status-Active-success)
+
+*“Simulate real users, understand real behavior, optimize real performance.”*
+
+A sophisticated Python-based web traffic bot that simulates human-like browsing sessions to visit websites with natural interactions.
 
 ## 📁 Project Structure
 
 ```
-SEO_BOT/
+SpidyCrawler/
 ├── runBot.bat                                  # Perfect launcher
 ├── Source/
 │   ├── __pycache__/                            # Cache
-│   ├── SEO_BOT.py                              # Updated for multi-bot
+│   ├── SC_BOT.py                              # Updated for multi-bot
 │   └── bot_manager.py                          # Unlimited scaling
 ├── Customize/
 │   ├── urls.txt
@@ -46,7 +53,7 @@ If you prefer manual installation:
 3. **Run the bot**:
 
    ```bash
-   python source/SEO_BOT.py
+   python source/SC_BOT.py
    ```
 
 ## ⚙️ Configuration
@@ -126,7 +133,7 @@ The updated bot count section now includes the scale testing information and sys
 
 The bot creates detailed logs in the `Logs/bot1....` folder:
 
-- `SEO_BOT.log` - Real-time activity log
+- `SC_BOT.log` - Real-time activity log
 - `session_progress.json` - Live progress tracking
 - `session_final.json` - Complete session summary
 - `verification_challenges.log` - Security challenge records
@@ -194,7 +201,7 @@ The bot automatically installs:
 
 ### Log Files Location
 
-Check `SEO_BOT\Logs\` for detailed error information and session reports.
+Check `SC_BOT\Logs\` for detailed error information and session reports.
 
 ## 📄 License
 
